@@ -1,0 +1,138 @@
+================================================================
+  PROJECT OVERVIEW: Customer Lookup + Naive Bayes Classifier
+================================================================
+
+WHAT PROJECT IS THIS?
+---------------------
+It is a flask based web application which is used for customer support 
+to automatically classify queries nd find the customer in the database.
+
+================================================================
+STEP-BY-STEP PROJECT OVERVIEW
+================================================================
+
+STEP 1 — SETUP & CONFIGURATION
+--------------------------------
+- Flask web server used (Python)
+- Connected to mysql database (localhost)
+- 3 tables considered:
+    * customers       → customer records store
+    * issues          → detected issues log
+    * classification_log → har query ka ML result save hota hai
+- Required libraries:
+    flask, mysql-connector-python, scikit-learn
+
+STEP 2 — NAIVE BAYES MODEL TRAINING
+-------------------------------------
+- 5 categories define :
+    1. Payment Issue
+    2. Technical Problem
+    3. Product Inquiry
+    4. Refund Request
+    5. Delivery Issue
+- Each category have 60 training examples(total~300)
+- By CountVectorizer text is converted to numbers
+- MultinomialNB (Naive Bayes) model train 
+-Model automatically train on startup
+
+
+STEP 3 — PII (PERSONAL INFO) DETECTION
+----------------------------------------
+- sensitive data detect in query text:
+    * Phone number, Email, Aadhaar, PAN, IFSC
+    * Card number, Account number, PIN code
+- Regex patterns se detection hoti hai
+- Detected PII ko mask kiya jata hai → e.g., [EMAIL], [PHONE]
+
+STEP 4 — NAME EXTRACTION
+--------------------------
+- Customer ka naam query se nikala jata hai
+- 3 methods use hoti hain:
+    1. "My name is ..." pattern
+    2. "Hi, I am ..." pattern
+    3. Capital letters wale proper nouns
+- Common non-name words (hi, hello, sir, etc.) ko filter kiya jata hai
+
+STEP 5 — CUSTOMER LOOKUP (DATABASE SEARCH)
+--------------------------------------------
+- 3-step fallback strategy:
+    1. PII Exact Match  → Phone/Email/Aadhaar se exact customer dhundo
+       (Confidence: HIGH)
+    2. Full Name Match  → Naam se LIKE query se dhundo
+       (Confidence: HIGH)
+    3. Single Word Match → Ek word se dhundo, sirf tab save karo
+       jab exactly 1 result mile (Confidence: MEDIUM)
+- Agar koi match nahi mila → Confidence: LOW, issue save nahi hoga
+
+STEP 6 — CLASSIFICATION + LOGGING
+------------------------------------
+- Har query ko Naive Bayes classify karta hai
+- Category + probability + detected names → classification_log mein save
+- Agar customer mila (high/medium confidence) → issues table mein bhi save
+
+STEP 7 — API ENDPOINTS
+------------------------
+- POST /api/lookup
+    → Customer dhundo + classify karo + log karo
+    → Response mein: customer info, issue type, probabilities,
+      match method, confidence level
+
+- POST /api/classify  (ya GET /api/classify?text=...)
+    → Sirf classification karo (customer lookup nahi)
+    → Response mein: category, probability, all class probs
+
+- GET  /api/metrics
+    → Model ki performance metrics return karta hai:
+      Accuracy, Precision, Recall, F1 Score, Confusion Matrix
+
+- GET  /api/issues
+    → Pichli 200 issues list karta hai database se
+
+- GET  /
+    → Frontend HTML page serve karta hai (index.html)
+
+STEP 8 — PERFORMANCE METRICS
+------------------------------
+- Startup pe 80/20 train-test split se metrics calculate hoti hain:
+    * Accuracy
+    * Precision (macro)
+    * Recall (macro)
+    * F1 Score (macro)
+    * Confusion Matrix (5x5)
+- GET /api/metrics se real-time dekh sakte hain
+
+================================================================
+PROJECT FLOW SUMMARY (EK QUERY KA SAFAR)
+================================================================
+
+User Query
+    ↓
+PII Detection + Name Extraction
+    ↓
+Naive Bayes Classification → Category + Probability
+    ↓
+Classification Log mein Save
+    ↓
+Database mein Customer Search (PII → Name → Word)
+    ↓
+Agar customer mila → Issue table mein Save
+    ↓
+JSON Response return (customer info + issue + scores)
+
+================================================================
+HOW TO RUN
+================================================================
+
+1. Dependencies install karo:
+   pip install flask mysql-connector-python scikit-learn
+
+2. MySQL mein customers_db database banao
+   aur customers table setup karo
+
+3. app.py chalao:
+   python app.py
+
+4. Browser mein kholo:
+   http://localhost:5000
+
+================================================================

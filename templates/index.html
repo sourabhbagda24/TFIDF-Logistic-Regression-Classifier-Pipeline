@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus · Intelligence Platform</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg: #f5f9f6;
+  --surface: #ffffff;
+  --surface2: #eef7f1;
+  --border: #daeee1;
+  --border2: #b8dfc3;
+  --accent: #12a04a;
+  --accent-hover: #0d8a3f;
+  --accent-light: #d6f5e3;
+  --accent-mid: #a7e8c0;
+  --text: #0b1f14;
+  --muted: #5a7066;
+  --sans: 'Inter', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh}
+
+/* HEADER */
+header {
+  background: var(--surface);
+  border-bottom: 1.5px solid var(--border);
+  padding: 0 32px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo-mark { width: 36px; height: 36px; flex-shrink: 0; }
+
+.brand { display: flex; flex-direction: column; gap: 0; }
+.brand-name {
+  font-size: 15px; font-weight: 800;
+  letter-spacing: -0.4px; color: var(--text); line-height: 1;
+}
+.brand-tag {
+  font-size: 9.5px; font-family: var(--mono);
+  color: var(--accent); letter-spacing: 0.8px;
+  text-transform: uppercase; line-height: 1; margin-top: 3px;
+}
+
+.hdr-divider { width: 1px; height: 22px; background: var(--border2); margin: 0 4px; }
+.hdr-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+.env-badge {
+  font-size: 10px; font-family: var(--mono);
+  color: var(--accent); background: var(--accent-light);
+  border: 1px solid var(--accent-mid);
+  padding: 3px 10px; border-radius: 20px; letter-spacing: 0.3px;
+}
+
+.tab-btn {
+  padding: 6px 15px; border-radius: 8px;
+  border: 1.5px solid var(--border2);
+  background: transparent; color: var(--muted);
+  font-family: var(--sans); font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all .15s;
+  display: flex; align-items: center; gap: 6px;
+}
+.tab-btn svg { width: 14px; height: 14px; }
+.tab-btn.active, .tab-btn:hover {
+  background: var(--accent); color: #fff; border-color: var(--accent);
+}
+
+/* MAIN */
+.main { max-width: 920px; margin: 0 auto; padding: 28px 20px 60px; }
+
+/* BANNER */
+.issue-banner {
+  display: none; align-items: center; gap: 14px;
+  padding: 14px 20px; border-radius: 12px;
+  margin-bottom: 20px; border: 1.5px solid;
+}
+.issue-banner.on { display: flex; }
+.ib-icon { font-size: 24px; flex-shrink: 0; }
+.ib-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; opacity: .65; margin-bottom: 3px; }
+.ib-value { font-size: 16px; font-weight: 800; }
+.ib-right { margin-left: auto; text-align: right; }
+.ib-tag { font-size: 10px; font-family: var(--mono); opacity: .6; background: rgba(0,0,0,.06); padding: 2px 8px; border-radius: 6px; }
+
+/* SEARCH CARD */
+.search-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 12px rgba(18,160,74,.07);
+}
+.search-card::before {
+  content: ''; display: block; height: 3px;
+  background: linear-gradient(90deg, var(--accent) 0%, #52d68a 100%);
+}
+.search-top { padding: 22px 24px 0; }
+.search-top h2 {
+  font-size: 13px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .8px; margin-bottom: 14px;
+}
+
+.msg-wrap {
+  display: flex; border: 1.5px solid var(--border2);
+  border-radius: 10px; overflow: hidden;
+  background: var(--bg); flex-direction: column;
+  transition: border-color .2s, box-shadow .2s;
+}
+.msg-wrap:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(18,160,74,.1);
+}
+.msg-wrap textarea {
+  width: 100%; min-height: 120px; padding: 15px 16px;
+  background: transparent; border: none; resize: vertical;
+  color: var(--text); font-family: var(--sans);
+  font-size: 14px; line-height: 1.65; outline: none;
+}
+.msg-wrap textarea::placeholder { color: var(--muted); }
+
+.msg-footer {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px 9px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--surface2);
+}
+.char-count { font-size: 11px; color: var(--muted); font-family: var(--mono); }
+.detect-hint { font-size: 11px; color: var(--muted); font-style: italic; }
+
+.search-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 20px; background: var(--accent);
+  border: none; color: #fff; font-family: var(--sans);
+  font-size: 13px; font-weight: 700;
+  cursor: pointer; border-radius: 8px;
+  transition: background .15s, transform .1s;
+}
+.search-btn:hover { background: var(--accent-hover); }
+.search-btn:active { transform: scale(0.98); }
+.search-btn svg { width: 15px; height: 15px; }
+
+/* CHIPS */
+.chips {
+  padding: 14px 24px 18px;
+  display: flex; flex-wrap: wrap; gap: 7px; align-items: center;
+}
+.chips-label {
+  font-size: 10px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .6px; font-weight: 600;
+}
+.chip {
+  padding: 4px 12px; border-radius: 20px;
+  background: var(--accent-light); color: #0d6630;
+  font-size: 11px; cursor: pointer;
+  border: 1px solid var(--accent-mid);
+  transition: all .15s; font-family: var(--mono); font-weight: 500;
+}
+.chip:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+/* LOADER */
+.loader {
+  display: none; align-items: center; justify-content: center;
+  gap: 10px; padding: 48px; color: var(--muted); font-size: 13px;
+}
+.loader.on { display: flex; }
+.spinner {
+  width: 18px; height: 18px;
+  border: 2px solid var(--border2);
+  border-top-color: var(--accent);
+  border-radius: 50%; animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* EMPTY */
+.empty {
+  text-align: center; padding: 52px 20px;
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 14px; color: var(--muted); font-size: 13px;
+}
+.empty .icon { font-size: 36px; margin-bottom: 10px; }
+.empty h3 { font-size: 14px; color: var(--text); margin-bottom: 6px; }
+
+/* RESULT HEADER */
+.result-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px; flex-wrap: wrap;
+}
+.result-header h3 { font-size: 14px; font-weight: 700; }
+.count-badge {
+  background: var(--accent-light); color: #0d6630;
+  border: 1px solid var(--accent-mid);
+  font-size: 11px; font-family: var(--mono);
+  padding: 2px 9px; border-radius: 20px;
+}
+.query-tag {
+  margin-left: auto; font-size: 11px; color: var(--muted);
+  font-family: var(--mono); max-width: 300px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* CUSTOMER CARD */
+.c-card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 14px; overflow: hidden; margin-bottom: 14px;
+  box-shadow: 0 1px 6px rgba(18,160,74,.05);
+}
+.c-head {
+  padding: 14px 18px; background: var(--accent-light);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.avatar {
+  width: 42px; height: 42px; border-radius: 10px;
+  background: var(--accent); display: grid; place-items: center;
+  font-size: 18px; font-weight: 800; color: #fff; flex-shrink: 0;
+}
+.c-name { font-size: 15px; font-weight: 700; color: var(--text); }
+.c-sub { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 2px; }
+.c-head-pills { margin-left: auto; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.issue-pill {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 700;
+  padding: 4px 12px; border-radius: 20px; border: 1px solid; white-space: nowrap;
+}
+.matched-pill {
+  font-size: 10px; font-weight: 600; padding: 4px 11px; border-radius: 20px;
+  background: var(--accent-light); color: #0d6630; border: 1px solid var(--accent-mid);
+}
+.saved-pill {
+  font-size: 10px; font-weight: 600; padding: 4px 11px; border-radius: 20px;
+  background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;
+}
+.c-body { padding: 16px 18px; }
+.c-field-issue {
+  grid-column: 1 / -1; display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; border-radius: 9px; border: 1px solid; margin-bottom: 4px;
+}
+.c-field-issue .ii { font-size: 20px; flex-shrink: 0; }
+.c-field-issue .k { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .7px; opacity: .65; margin-bottom: 3px; }
+.c-field-issue .v { font-size: 14px; font-weight: 800; }
+.c-field-issue .meta { margin-left: auto; font-size: 10px; opacity: .6; font-family: var(--mono); text-align: right; }
+.c-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+}
+.c-field { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 9px 11px; }
+.c-field.hl { border-color: var(--accent-mid); background: var(--accent-light); }
+.c-field .k { font-size: 9px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 4px; }
+.c-field .v { font-family: var(--mono); font-size: 12px; word-break: break-all; color: var(--text); }
+.c-field.hl .v { color: #0d6630; }
+
+/* ISSUES LOG */
+#issuesView { display: none; }
+#lookupView { display: block; }
+.issues-table-wrap {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 14px; overflow: hidden;
+  box-shadow: 0 2px 12px rgba(18,160,74,.07);
+}
+.issues-table-wrap::before {
+  content: ''; display: block; height: 3px;
+  background: linear-gradient(90deg, var(--accent) 0%, #52d68a 100%);
+}
+.issues-table-header {
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.issues-table-header h2 { font-size: 14px; font-weight: 700; }
+.refresh-btn {
+  margin-left: auto; padding: 5px 14px; border-radius: 7px;
+  border: 1.5px solid var(--border2); background: transparent;
+  color: var(--muted); font-size: 12px; cursor: pointer; transition: .15s;
+}
+.refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
+table { width: 100%; border-collapse: collapse; }
+thead tr { background: var(--surface2); }
+th {
+  padding: 10px 14px; text-align: left; font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .6px; color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+td { padding: 10px 14px; font-size: 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: var(--accent-light); }
+.td-id { font-family: var(--mono); color: var(--muted); }
+.td-name { font-weight: 600; }
+.td-issue-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px; border: 1px solid; white-space: nowrap;
+}
+.td-query { font-family: var(--mono); font-size: 11px; color: var(--muted); max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.td-time { font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+@media (max-width: 600px) {
+  header { padding: 0 14px; }
+  .main { padding: 16px 12px 48px; }
+  .search-top { padding: 16px 14px 0; }
+  .chips { padding: 10px 14px 14px; }
+  .msg-wrap textarea { min-height: 100px; font-size: 13px; }
+  .hdr-right .env-badge { display: none; }
+  .brand-tag { display: none; }
+  .detect-hint { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <svg class="logo-mark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 2L32 10V26L18 34L4 26V10L18 2Z" fill="#12a04a"/>
+    <circle cx="18" cy="10" r="2.5" fill="white"/>
+    <circle cx="10" cy="23" r="2.5" fill="white"/>
+    <circle cx="26" cy="23" r="2.5" fill="white"/>
+    <line x1="18" y1="10" x2="10" y2="23" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="18" y1="10" x2="26" y2="23" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="10" y1="23" x2="26" y2="23" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+    <circle cx="18" cy="17.5" r="2" fill="white" opacity="0.7"/>
+  </svg>
+
+  <div class="brand">
+    <span class="brand-name">Nexus</span>
+    <span class="brand-tag">Intelligence Platform</span>
+  </div>
+
+  <div class="hdr-divider"></div>
+
+  <div class="hdr-right">
+    <span class="env-badge">MySQL · NLP Classifier</span>
+    <button class="tab-btn active" id="tabLookup" onclick="switchTab('lookup')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Lookup
+    </button>
+    <button class="tab-btn" id="tabIssues" onclick="switchTab('issues')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 12 2 2 4-4"/></svg>
+      Issues Log
+    </button>
+  </div>
+</header>
+
+<div class="main">
+
+  <div id="lookupView">
+
+    <div class="issue-banner" id="issueBanner">
+      <div class="ib-icon" id="bannerIcon"></div>
+      <div>
+        <div class="ib-label">Detected Issue Category</div>
+        <div class="ib-value" id="bannerValue"></div>
+      </div>
+      <div class="ib-right">
+        <div class="ib-tag">NLP · keyword classifier</div>
+        <div class="ib-tag" id="bannerSaved" style="margin-top:4px;display:none">✅ Saved to DB</div>
+      </div>
+    </div>
+
+    <div class="search-card">
+      <div class="search-top">
+        <h2>Customer Message / Query</h2>
+        <div class="msg-wrap">
+          <textarea id="q" placeholder="Paste full customer message — name, PAN, phone, email, issue auto-detected.
+
+E.g.  Rahul Sharma 9876543210 payment failed card declined
+E.g.  ABCDE1234F refund request wrong item received"></textarea>
+          <div class="msg-footer">
+            <span class="char-count" id="charCount">0 chars</span>
+            <span class="detect-hint">Detects: name · phone · email · PAN · Aadhaar · issue</span>
+            <button class="search-btn" onclick="go()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              Search &amp; Classify
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="chips">
+        <span class="chips-label">Quick try ·</span>
+        <span class="chip" onclick="setQ('Rahul Sharma 9876543210 payment failed card declined')">💳 Payment</span>
+        <span class="chip" onclick="setQ('Priya Singh package not delivered tracking stuck')">🚚 Delivery</span>
+        <span class="chip" onclick="setQ('john app keeps crashing login error 2fa not working')">🔧 Technical</span>
+        <span class="chip" onclick="setQ('Amit Kumar ABCDE1234F refund request wrong item received')">↩️ Refund</span>
+        <span class="chip" onclick="setQ('Sara what is the warranty on this product size chart')">📦 Product</span>
+        <span class="chip" onclick="setQ('9876543210 double charged billing duplicate transaction')">💳 Duplicate</span>
+      </div>
+    </div>
+
+    <div class="loader" id="loader"><div class="spinner"></div> Searching database…</div>
+    <div id="out"></div>
+  </div>
+
+  <div id="issuesView">
+    <div class="issues-table-wrap">
+      <div class="issues-table-header">
+        <h2>Issues Log</h2>
+        <span id="issueCountBadge" class="count-badge" style="display:none"></span>
+        <button class="refresh-btn" onclick="loadIssues()">↻ Refresh</button>
+      </div>
+      <div id="issuesTableBody">
+        <div class="empty" style="border:none;border-radius:0">
+          <div class="icon">📋</div>
+          <h3>No issues loaded yet</h3>
+          <p>Search a customer first to log issues here.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const ISSUE_META = {
+  "Payment Issue":    {icon:"💳",color:"#c2410c",bg:"#fff7ed",border:"#fed7aa"},
+  "Technical Problem":{icon:"🔧",color:"#b91c1c",bg:"#fef2f2",border:"#fecaca"},
+  "Product Inquiry":  {icon:"📦",color:"#1d4ed8",bg:"#eff6ff",border:"#bfdbfe"},
+  "Refund Request":   {icon:"↩️",color:"#7e22ce",bg:"#faf5ff",border:"#e9d5ff"},
+  "Delivery Issue":   {icon:"🚚",color:"#166534",bg:"#f0fdf4",border:"#bbf7d0"},
+  "Unknown":          {icon:"❓",color:"#6b7280",bg:"#f9fafb",border:"#e5e7eb"},
+};
+function meta(i){return ISSUE_META[i]||ISSUE_META["Unknown"];}
+
+function switchTab(t){
+  document.getElementById('lookupView').style.display=t==='lookup'?'block':'none';
+  document.getElementById('issuesView').style.display=t==='issues'?'block':'none';
+  document.getElementById('tabLookup').classList.toggle('active',t==='lookup');
+  document.getElementById('tabIssues').classList.toggle('active',t==='issues');
+  if(t==='issues')loadIssues();
+}
+
+document.getElementById('q').addEventListener('input',function(){
+  document.getElementById('charCount').textContent=this.value.length+' chars';
+});
+document.getElementById('q').addEventListener('keydown',function(e){
+  if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();go();}
+});
+
+function setQ(v){
+  const ta=document.getElementById('q');
+  ta.value=v;
+  document.getElementById('charCount').textContent=v.length+' chars';
+  go();
+}
+
+async function go(){
+  const q=document.getElementById('q').value.trim();
+  if(!q)return;
+  document.getElementById('loader').classList.add('on');
+  document.getElementById('out').innerHTML='';
+  document.getElementById('issueBanner').classList.remove('on');
+  document.getElementById('bannerSaved').style.display='none';
+  try{
+    const r=await fetch('/api/lookup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:q})});
+    const d=await r.json();
+    if(d.error&&!d.customers?.length){showErr('Database Error',d.error,'⚠️');return;}
+    const issue=d.issue||"Unknown";
+    const m=meta(issue);
+    const banner=document.getElementById('issueBanner');
+    banner.style.background=m.bg;
+    banner.style.borderColor=m.border;
+    banner.style.color=m.color;
+    document.getElementById('bannerIcon').textContent=m.icon;
+    document.getElementById('bannerValue').textContent=issue;
+    banner.classList.add('on');
+    if(d.saved_issues&&d.saved_issues.some(x=>x))
+      document.getElementById('bannerSaved').style.display='block';
+    render(d.customers||[],q,d.matched_by||[],issue,m);
+  }catch(e){
+    showErr('Server Error','python app.py chal raha hai?','🔌');
+  }finally{
+    document.getElementById('loader').classList.remove('on');
+  }
+}
+
+function render(list,q,matchedBy,issue,m){
+  const el=document.getElementById('out');
+  if(!list.length){
+    el.innerHTML=`<div class="empty"><div class="icon">🔍</div><h3>No customer found</h3><p>No record matched the query.</p><p style="margin-top:10px;font-size:12px;">Issue detected: <strong>${m.icon} ${esc(issue)}</strong></p></div>`;
+    return;
+  }
+  const cards=list.map((c,i)=>{
+    const nk=['name','full_name','customer_name'].find(k=>c[k]);
+    const name=nk?c[nk]:'Customer';
+    const ik=['id','customer_id','cust_id'].find(k=>c[k]);
+    const sub=ik?`ID: ${c[ik]}`:`Record ${i+1}`;
+    const hl=matchedBy[i]||[];
+    const issuePill=`<span class="issue-pill" style="color:${m.color};background:${m.bg};border-color:${m.border}">${m.icon} ${esc(issue)}</span>`;
+    const issueRow=`<div class="c-field-issue" style="background:${m.bg};border-color:${m.border};color:${m.color}"><span class="ii">${m.icon}</span><div><div class="k">Issue Category</div><div class="v">${esc(issue)}</div></div><div class="meta">Saved to<br>issues table ✅</div></div>`;
+    const fields=Object.entries(c).filter(([k])=>k!=='ISSUE').map(([k,v])=>`<div class="c-field ${hl.includes(k)?'hl':''}"><div class="k">${esc(k)}</div><div class="v">${esc(String(v??'—'))}</div></div>`).join('');
+    return `<div class="c-card"><div class="c-head"><div class="avatar">${esc(name.charAt(0).toUpperCase())}</div><div><div class="c-name">${esc(name)}</div><div class="c-sub">${esc(sub)}</div></div><div class="c-head-pills">${issuePill}<span class="matched-pill">✅ Matched</span><span class="saved-pill">💾 Saved</span></div></div><div class="c-body"><div class="c-grid">${issueRow}${fields}</div></div></div>`;
+  }).join('');
+  el.innerHTML=`<div class="result-header"><h3>Search Results</h3><span class="count-badge">${list.length} found</span><span class="query-tag">"${esc(q.substring(0,60))}${q.length>60?'…':''}"</span></div>${cards}`;
+}
+
+async function loadIssues(){
+  document.getElementById('issuesTableBody').innerHTML='<div class="empty" style="border:none"><div class="spinner" style="margin:32px auto"></div></div>';
+  try{
+    const r=await fetch('/api/issues');
+    const d=await r.json();
+    if(d.error){showIssueErr(d.error);return;}
+    renderIssuesTable(d.issues||[]);
+  }catch(e){
+    showIssueErr('Cannot connect to server');
+  }
+}
+
+function renderIssuesTable(rows){
+  const badge=document.getElementById('issueCountBadge');
+  badge.textContent=rows.length+' records';
+  badge.style.display='inline-block';
+  if(!rows.length){
+    document.getElementById('issuesTableBody').innerHTML='<div class="empty" style="border:none;border-radius:0"><div class="icon">📭</div><h3>No issues logged yet</h3><p>Search a customer in Lookup to log an issue.</p></div>';
+    return;
+  }
+  const rows_html=rows.map(r=>{
+    const m=meta(r.issue);
+    return`<tr><td class="td-id">${esc(String(r.id))}</td><td class="td-id">${esc(String(r.customer_id??'—'))}</td><td class="td-name">${esc(r.name)}</td><td><span class="td-issue-badge" style="color:${m.color};background:${m.bg};border-color:${m.border}">${m.icon} ${esc(r.issue)}</span></td><td class="td-query" title="${esc(r.query_text)}">${esc(r.query_text)}</td><td class="td-time">${esc(r.created_at)}</td></tr>`;
+  }).join('');
+  document.getElementById('issuesTableBody').innerHTML=`<table><thead><tr><th>#</th><th>Cust ID</th><th>Name</th><th>Issue</th><th>Query</th><th>Time</th></tr></thead><tbody>${rows_html}</tbody></table>`;
+}
+
+function showIssueErr(msg){
+  document.getElementById('issuesTableBody').innerHTML=`<div class="empty" style="border:none;border-radius:0"><div class="icon">⚠️</div><h3>Error</h3><p>${esc(msg)}</p></div>`;
+}
+function showErr(title,msg,icon){
+  document.getElementById('out').innerHTML=`<div class="empty"><div class="icon">${icon}</div><h3>${esc(title)}</h3><p style="margin-top:4px">${esc(msg)}</p></div>`;
+}
+function esc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
